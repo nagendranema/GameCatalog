@@ -82,20 +82,28 @@ namespace GameCatalog.Controllers
             }
         }
 
+
         /// <summary>
-        /// Add the Game
+        /// Add the game
         /// </summary>
-        /// <param name="game"></param>
-        /// <returns>Updated List of Games</returns>
+        /// <param name="game">Game to be added</param>
+        /// <returns>List of Games</returns>
         [HttpPost]
         [Route("[action]")]
         public IActionResult AddGame(Game game)
         {
-            if (game.Id == 0) 
+            if (game.Id == 0)
             {
                 return BadRequest("Id is required for Game");
             }
-           return Ok(_gameRepository.AddGame(game));            
+            try
+            {
+                return Ok(_gameRepository.AddGame(game));
+            }
+            catch (DuplicateItemException ex)
+            {
+                return Conflict(ex.Message);
+            }
         }
 
         /// <summary>
